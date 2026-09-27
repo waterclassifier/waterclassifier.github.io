@@ -24,4 +24,41 @@ From another perspective, lets suppose we are to visit all 541 stations, and we 
 
 Therefore, we will change our objective slightly. Instead of visiting all stations in the shortest time possible, our goal would be to visit as many different stations as possible in a single run - a single day. From an optimization perspective, we are attempting the *dual* of the original challenge.
 
-## 
+## The Plan
+
+Here is the high level plan. We first need a sufficiently accurate mathematical model of the Beijing Subway, so that we can construct and verify routes through the system. To construct such a model, we first need to gather:
+
+1. A timetable of when every train arrives at every station
+2. A table of distance / time between platforms at every single transfer station (at every station in reality, since we sometimes need to disembark and go the other direction)
+
+
+Then, we will use standard optimization algorithms to solve for a directed path through the graph that visits the highest number of different stations, taking into account additional factors such as transfer time uncertainties. Finally, we will verify the route in simulation, and give it a go in real life if it passes the test.
+
+## Modeling the Metro
+
+With these data gathered, we will construct a [graph](https://en.wikipedia.org/wiki/Graph) to represent the Beijing Subway, and to transform our problem into a graph theoretical problem. 
+
+Here, we actually have choices as to how complex we want our model to be - how many real life variables we want to keep vs. how many we want to abstract away. At the bottom of the complexity ladder, we have model A [find a more descriptive pair of names of these two models], which represents the Beijing Subway as a simple undirected graph, where:
+
+- Each vertex represents a station A.
+- If station A and B are adjacent on the same line, then there is an edge between vertex A and B.
+- The weight of edge AB is the travel time between station A and B, calculated from the timetable.
+
+With this model, we assume that transferring at a transfer station - both the walking part and the waiting part - takes no time. This is not true, but not *too far* from reality either, given the high service frequency of Beijing Subway. In theory, the longest we have to wait for a train is [insert length of time, station, and time of day here, should be about 10 minutes], and the longest we have to walk is [insert length of time, station, distance here, should be around 9 minutes]. Back of envelope math says that if we make ten transfers during a run, each taking 5 minutes (including wait time), this would give us a total error of 50 minutes or around 4.6% of total run time - not too bad. Finally, we also assume that travel time between two stations is constant and equal in both directions, which is mostly true [check this one!].
+
+[Insert histogram of transfer time and time between two consecutive trains here]
+
+From another perspective, this is an optimistic model, since it almost always underestimates the time it takes to get from one station to another by ignoring transfer times (unless the train beats the schedule *significantly* in real life). This also means that the route that it produces serves as an upper-bound, score wise, to what could be achieved in practice.
+
+At the top of the complexity ladder, on the other hand, we have model B, which uses a directed graph to represent the metro system:
+
+- For each train X that stops at a specific station Y, we have a vertex represented by the pair (train X, station Y). If we are at this vertex on the graph, it means that we are aboard train X while it stops at station Y - either boarding the train there, disembarking from the train there, or staying on the train while it goes through there.
+- There is an edge from vertex U to vertex V if we can travel from U to V by either staying on train and riding for one stop, or by transferring to another line on foot. This means that:
+    - If train X stops at Y, and its not the final stop, then is an edge from (X, Y) to (X, Next Station from Y in X's direction). Its weight would be the travel time of the train, as calculated from the timetable.
+    - If Y is a transfer station, and train X and X' stop there, then there is an edge from (X, Y) to (X', Y), if there is enough time between their arrival to transfer from X to X'. Its weight would be the time between the arrival of X and X'.
+
+Thus, we have explicitly taken into account both the walking and waiting time of transfers. In theory, paths through this graph should translate exactly to real life routes, assuming the datasets are accurate. However, this comes at the cost of expanding each station into 300+ vertices, increasing our total vertex count by two orders of magnitude, and the edge count similarly. We can prune the graph with some heuristics, but it will certainly remain more complex and expensive than model A. Further, any error in the transfer time data would poison this model more than model A.
+
+
+
+
