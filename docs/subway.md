@@ -31,14 +31,15 @@ Here is the high level plan. We first need a sufficiently accurate mathematical 
 1. A timetable of when every train arrives at every station
 2. A table of distance / time between platforms at every single transfer station (at every station in reality, since we sometimes need to disembark and go the other direction)
 
+Then, we will model the metro network as a [graph](https://en.wikipedia.org/wiki/Graph), a route through the network as a path through the graph, so that we can frame our problem as a graph theoretical one. This would allow us to find solutions using standard optimization algorithms. We would also add fudge factors to account for variables not reflected in our dataset, such as the possibility of missing a train. 
 
-Then, we will use standard optimization algorithms to solve for a directed path through the graph that visits the highest number of different stations, taking into account additional factors such as transfer time uncertainties. Finally, we will verify the route in simulation, and give it a go in real life if it passes the test.
+Finally, we will verify promising routes in simulation, and hopefully test it out in real life! We will also have some fun with the problem by nudging the parameters - what if we *are* allowed to exit the metro system to take shortcuts? Hide in a bathroom overnight? Or split our run into multiple days?
 
 ## Modeling the Metro
 
-With these data gathered, we will construct a [graph](https://en.wikipedia.org/wiki/Graph) to represent the Beijing Subway, and to transform our problem into a graph theoretical problem. 
+With these data gathered, we will construct a graph to represent the Beijing Subway, and to transform our problem into a graph theoretical problem. Here, we actually have choices as to how complex we want our model to be - how many real life variables we want to keep vs. how many we want to abstract away. 
 
-Here, we actually have choices as to how complex we want our model to be - how many real life variables we want to keep vs. how many we want to abstract away. At the bottom of the complexity ladder, we have model A [find a more descriptive pair of names of these two models], which represents the Beijing Subway as a simple undirected graph, where:
+At the bottom of the complexity ladder, we have model A [find a more descriptive pair of names of these two models], which represents the Beijing Subway as a simple undirected graph, where:
 
 - Each vertex represents a station A.
 - If station A and B are adjacent on the same line, then there is an edge between vertex A and B.
