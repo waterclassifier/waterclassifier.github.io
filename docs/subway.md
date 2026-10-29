@@ -35,6 +35,14 @@ Then, we will model the metro network as a [graph](https://en.wikipedia.org/wiki
 
 Finally, we will verify promising routes in simulation, and hopefully test it out in real life! We will also have some fun with the problem by nudging the parameters - what if we *are* allowed to exit the metro system to take shortcuts? Hide in a bathroom overnight? Or split our run into multiple days?
 
+From a technical perspective, we will specify the entire data fetching, processing, simulation & eval, and plan generation process as a simple [Snakemake](https://snakemake.readthedocs.io/en/stable/index.html) pipeline (If you have not heard of Snakemake, it is essentially a data science version of GNU Make). This way, our end results will be reproducible from the scripts, we do not have to worry about versioning and finding mysterious intermediate results of unknown origin, and we can rerun the pipeline efficiently (partially) when we make changes.
+
+You can find the source code of the project along with some artifacts [here](https://github.com/waterclassifier/subway-challenge).
+
+## Data Collection
+
+The majority of our data will come from the [Beijing Subway Tools](https://github.com/Mick235711/Beijing-Subway-Tools) repository maintained by Yihe Li et al on Github.
+
 ## Modeling the Metro
 
 With these data gathered, we will construct a graph to represent the Beijing Subway, and to transform our problem into a graph theoretical problem. Here, we actually have choices as to how complex we want our model to be - how many real life variables we want to keep vs. how many we want to abstract away. 
